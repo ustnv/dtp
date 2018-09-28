@@ -8,7 +8,7 @@ import json
 from ast import literal_eval
 import urllib.parse as urlparse
 
-from dtpparser.items import DtpparserItem
+from dtpparser.items import RegionItem
 
 
 class RegionSpider(scrapy.Spider):
@@ -34,7 +34,7 @@ class RegionSpider(scrapy.Spider):
                 data = m.groups()[0]
                 jdata = json.loads(data)
                 for federal_district in jdata[0]["Nodes"]:
-                    for region in federal_district["Nodes"][0:1]:
+                    for region in federal_district["Nodes"]:
                         region_name = region['Text'].replace("г.", "").replace("гор.", "").strip()
                         region_data = {
                             "code": region['Value'],
@@ -52,10 +52,10 @@ class RegionSpider(scrapy.Spider):
         export = json.loads(response.body_as_unicode())['metabase']
         export = json.loads(literal_eval(export)[0]['maps'])
         for area in export:
-            Item = DtpparserItem()
+            Item = RegionItem()
             Item['area_name'] = area["name"].replace("г.", "").replace("гор.", "").replace("ГО", "").strip()
             Item['oktmo_code'] = area["id"]
-            Item['parent_region_name'] = response.meta['code']
-            Item['parent_region_code'] = response.meta['name']
+            Item['parent_region_name'] = response.meta['name']
+            Item['parent_region_code'] = response.meta['code']
 
             yield Item

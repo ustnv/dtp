@@ -8,10 +8,11 @@
 from scrapy.item import Item, Field
 
 
-class DtpparserItem(Item):
+class RegionItem(Item):
     area_name = Field()
     oktmo_code = Field()
     parent_region_name = Field()
     parent_region_code = Field()
 
     pass
+
